@@ -229,12 +229,21 @@ class Evaluator(object):
         self.discriminator.eval()
 
         for i in range(0, self.src_emb.num_embeddings, bs):
-            emb = Variable(self.src_emb.weight[i:i + bs].data, volatile=True)
+            if LooseVersion(torch.__version__) >= LooseVersion("0.4.0"):
+                with torch.set_grad_enabled(False):
+                    emb = self.src_emb.weight[i:i + bs].data
+            else
+                emb = Variable(self.src_emb.weight[i:i + bs].data, volatile=True)
+                
             preds = self.discriminator(self.mapping(emb))
             src_preds.extend(preds.data.cpu().tolist())
 
         for i in range(0, self.tgt_emb.num_embeddings, bs):
-            emb = Variable(self.tgt_emb.weight[i:i + bs].data, volatile=True)
+            if LooseVersion(torch.__version__) >= LooseVersion("0.4.0"):
+                with torch.set_grad_enabled(False):
+                    emb = self.tgt_emb.weight[i:i + bs].data
+            else:
+                emb = Variable(self.tgt_emb.weight[i:i + bs].data, volatile=True)
             preds = self.discriminator(emb)
             tgt_preds.extend(preds.data.cpu().tolist())
 
