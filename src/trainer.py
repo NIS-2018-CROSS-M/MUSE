@@ -268,7 +268,11 @@ class Trainer(object):
         bs = 4096
         logger.info("Map source embeddings to the target space ...")
         for i, k in enumerate(range(0, len(src_emb), bs)):
-            x = Variable(src_emb[k:k + bs], volatile=True)
+            if LooseVersion(torch.__version__) >= LooseVersion("0.4.0"):
+                with torch.set_grad_enabled(False):
+                    x = src_emb[k:k + bs]   
+            else:
+                x = Variable(src_emb[k:k + bs], volatile=True)
             src_emb[k:k + bs] = self.mapping(x.cuda() if params.cuda else x).data.cpu()
 
         # write embeddings to the disk
