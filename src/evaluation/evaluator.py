@@ -232,7 +232,7 @@ class Evaluator(object):
             if LooseVersion(torch.__version__) >= LooseVersion("0.4.0"):
                 with torch.set_grad_enabled(False):
                     emb = self.src_emb.weight[i:i + bs].data
-            else
+            else:
                 emb = Variable(self.src_emb.weight[i:i + bs].data, volatile=True)
                 
             preds = self.discriminator(self.mapping(emb))
