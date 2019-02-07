@@ -6,6 +6,7 @@
 #
 
 import os
+from distutils.version import LooseVersion
 from logging import getLogger
 import scipy
 import scipy.linalg
@@ -66,13 +67,19 @@ class Trainer(object):
             tgt_ids = tgt_ids.cuda()
 
         # get word embeddings
-        with torch.set_grad_enabled(False):
-            src_emb = self.src_emb(src_ids)
-            tgt_emb = self.tgt_emb(tgt_ids)
-        with torch.set_grad_enabled(volatile):
-            src_emb = self.mapping(src_emb.data)
-            tgt_emb = tgt_emb.data
-
+        if LooseVersion(torch.__version__) >= LooseVersion("0.4.0"):
+            with torch.set_grad_enabled(False):
+                src_emb = self.src_emb(src_ids)
+                tgt_emb = self.tgt_emb(tgt_ids)
+            with torch.set_grad_enabled(volatile):
+                src_emb = self.mapping(src_emb.data)
+                tgt_emb = tgt_emb.data
+        else:
+            src_emb = self.src_emb(Variable(src_ids, volatile=True))
+            tgt_emb = self.tgt_emb(Variable(tgt_ids, volatile=True))
+            src_emb = self.mapping(Variable(src_emb.data, volatile=volatile))
+            tgt_emb = Variable(tgt_emb.data, volatile=volatile)
+            
         # input / target
         x = torch.cat([src_emb, tgt_emb], 0)
         y = torch.FloatTensor(2 * bs).zero_()
