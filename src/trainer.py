@@ -71,7 +71,7 @@ class Trainer(object):
             with torch.set_grad_enabled(False):
                 src_emb = self.src_emb(src_ids)
                 tgt_emb = self.tgt_emb(tgt_ids)
-            with torch.set_grad_enabled(volatile):
+            with torch.set_grad_enabled(not volatile):
                 src_emb = self.mapping(src_emb.data)
                 tgt_emb = tgt_emb.data
         else:
