@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 #
 
+from distutils.version import LooseVersion
 from logging import getLogger
 from copy import deepcopy
 import numpy as np
