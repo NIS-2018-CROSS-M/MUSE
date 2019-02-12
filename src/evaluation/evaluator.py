@@ -9,6 +9,7 @@ from distutils.version import LooseVersion
 from logging import getLogger
 from copy import deepcopy
 import numpy as np
+import torch
 from torch.autograd import Variable
 from torch import Tensor as torch_tensor
 
